@@ -239,6 +239,7 @@ extern void smtpd_state_reset(SMTPD_STATE *);
 #define SMTPD_CMD_XCLIENT	"XCLIENT"
 #define SMTPD_CMD_XFORWARD	"XFORWARD"
 #define SMTPD_CMD_UNKNOWN	"UNKNOWN"
+#define SMTPD_CMD_FORREST	"FORREST"
 
  /*
   * Representation of unknown and non-existent client information. Throughout

